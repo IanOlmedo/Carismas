@@ -1,0 +1,13 @@
+{
+  "name": "enciclopedia-carismas",
+  "version": "1.0.0",
+  "description": "Enciclopedia para jóvenes de los carismas y espiritualidades de la Iglesia Católica",
+  "private": true,
+  "scripts": {
+    "verificar": "node herramientas/verificar.js",
+    "servir": "npx --yes serve ."
+  },
+  "devDependencies": {
+    "playwright": "^1.47.0"
+  }
+}
