@@ -22,7 +22,7 @@ index.html                 Marcado base y carga de scripts (en orden)
 css/estilos.css            Todo el diseño (tokens de color, tipografía, componentes)
 js/datos/marcas.js         MK: las cuatro marcas de verificación
 js/datos/glosario.js       GLOSARIO: clave -> [término, definición]
-js/datos/familias.js       FAMILIAS: las 7 familias, sus fichas (en orden) y "proximas"
+js/datos/familias.js       FAMILIAS: las 8 familias, sus fichas (en orden) y "proximas"
 js/datos/fichas/_base.js   const FICHAS = {}
 js/datos/fichas/<familia>.js  Object.assign(FICHAS, {...}) con las fichas de esa familia
 js/app.js                  Render, rosetón, ruteo por hash, glosario emergente
@@ -56,7 +56,7 @@ Cada sección también lleva `estado: 'v' | 'g' | 't' | 'p'`.
 
 ```js
 id: {                                  // kebab-case; si tiene guiones, entre comillas: "siervas-jesus"
-  familia: "apostolica",               // monacal | mendicante | canonigos | clerigos | apostolica | seculares | movimientos
+  familia: "apostolica",               // monacal | mendicante | canonigos | clerigos | apostolica | seculares | movimientos | diocesana
   nombre: "…", latin: "…",
   resumen: "…",                        // 2-3 oraciones, admite [[glosario]]
   tarjeta: "…",                        // una línea para la tarjeta de la familia
@@ -84,6 +84,10 @@ id: {                                  // kebab-case; si tiene guiones, entre co
   fuentes: [["Título de la fuente", "https://…"]]
 }
 ```
+
+**Familia `diocesana`** (sacerdote, diácono permanente, vírgenes, ermitaños, matrimonio, viudas): mantiene los mismos 10 `id`
+pero con títulos adaptados: Nombre · Origen en la Iglesia · Historia · Identidad y sentido · Espiritualidad ·
+Misión y servicio · Vestimenta y signos · Santos y testigos · Cómo es el camino · En Argentina y Mendoza.
 
 Componentes HTML disponibles dentro de `html`: `ul.dots`, `ol.timeline`, `div.cols > div.box`, `div.saints > div.saint`
 (con `b`, `span.d`, `p`, `div.tags`), `ol.steps`, `div.place`, `p.note`.

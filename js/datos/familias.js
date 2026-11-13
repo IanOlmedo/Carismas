@@ -1,4 +1,4 @@
-/* Las siete familias. "fichas" define el orden en que aparecen; "proximas" lista lo pendiente. */
+/* Las ocho familias. "fichas" define el orden en que aparecen; "proximas" lista lo pendiente. */
 const FAMILIAS = [
   { id:"monacal", nombre:"Vida monástica", era:"Desde el siglo IV",
     que:"Monjes y monjas que se retiran a un monasterio para buscar a Dios en la oración, el silencio y el trabajo. Su lema clásico, de San Benito, es “ora et labora”: rezá y trabajá.",
@@ -27,5 +27,9 @@ const FAMILIAS = [
   { id:"movimientos", nombre:"Movimientos y nuevas comunidades", era:"Siglo XX en adelante",
     que:"Caminos de fe nacidos sobre todo en el siglo XX, donde los laicos tienen un papel protagonista. Algunos incluyen familias, consagrados y sacerdotes bajo un mismo [[carisma|carisma]].",
     rasgos:["Ver [[movimiento|movimiento eclesial]] en el glosario.","Itinerarios de formación para jóvenes, matrimonios y familias.","Gran variedad: oración, misión, servicio a los pobres, vida comunitaria."],
-    fichas:["schoenstatt","focolares","renovacion-carismatica","neocatecumenal","comunion-liberacion","accion-catolica","emaus","cursillos","legion-maria","santegidio","opus-dei","hakuna","mfc","encuentro-matrimonial","ens"], proximas:[] }
+    fichas:["schoenstatt","focolares","renovacion-carismatica","neocatecumenal","comunion-liberacion","accion-catolica","emaus","cursillos","legion-maria","santegidio","opus-dei","hakuna","mfc","encuentro-matrimonial","ens"], proximas:[] },
+  { id:"diocesana", nombre:"Vocaciones en la Iglesia diocesana", era:"Desde los tiempos apostólicos",
+    que:"Caminos que no pasan por una orden, una congregación ni un movimiento. Se viven en la [[diocesis|diócesis]], la Iglesia de un lugar, en relación directa con su obispo, o nacen de un sacramento: el [[ordenacion|Orden]] o el Matrimonio. No tienen fundador ni hábito propio: su “regla” son el Evangelio, el [[codigo-derecho-canonico|Derecho Canónico]] y la vida de la Iglesia local.",
+    rasgos:["Sacerdotes y diáconos quedan [[incardinacion|incardinados]] en una diócesis: pertenecen a ella para toda la vida.","Vírgenes, ermitaños y viudas se consagran a Dios en manos del obispo diocesano, sin entrar a un instituto.","El matrimonio cristiano es un sacramento y también un camino de santidad: la familia es [[iglesia-domestica|Iglesia doméstica]]."],
+    fichas:["sacerdote-diocesano","diacono-permanente","virgenes-consagradas","ermitanos-diocesanos","matrimonio","viudas-consagradas"], proximas:[] }
 ];

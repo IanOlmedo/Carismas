@@ -56,6 +56,8 @@ img{max-width:100%}
 [data-fam="apostolica"]{--h:250;--c:.075}
 [data-fam="seculares"]{--h:230;--c:.025}
 [data-fam="movimientos"]{--h:25;--c:.095}
+/* verde agua: ocupa el hueco libre entre el verde monástico y el gris de los seculares */
+[data-fam="diocesana"]{--h:190;--c:.06}
 [data-fam]{
   --fam-tint: oklch(var(--tint-l) calc(var(--c) * .42) var(--h));
   --fam-ink: oklch(var(--fink-l) calc(var(--c) * 2) var(--h));
@@ -179,6 +181,8 @@ p{margin:0}
 .pat-apostolica{background:radial-gradient(circle, currentColor 2px, transparent 2.5px) 0 0/12px 8px repeat}
 .pat-seculares{background:linear-gradient(90deg, currentColor 1px, transparent 1px) 0 0/14px 100%, linear-gradient(currentColor 1px, transparent 1px) 0 0/100% 8px}
 .pat-movimientos{background:repeating-conic-gradient(from 0deg at 50% 120%, currentColor 0 4deg, transparent 4deg 10deg)}
+/* hilera de crucecitas griegas: brazo vertical (2×10) y brazo horizontal (10×2) centrados cada 20px */
+.pat-diocesana{background:linear-gradient(90deg, transparent 9px, currentColor 9px 11px, transparent 11px) 0 50%/20px 10px repeat-x, linear-gradient(90deg, transparent 5px, currentColor 5px 15px, transparent 15px) 0 50%/20px 2px repeat-x}
 
 /* glosario */
 .glos{padding-block:40px 24px;border-top:1px solid var(--line);margin-top:30px;scroll-margin-top:64px}

@@ -19,7 +19,7 @@ function pairUp(secs){
 }
 
 function rosette(){
-  /* Rosetón gótico: siete lancetas ojivales de vidrio emplomado, óculos dorados entre ellas,
+  /* Rosetón gótico: una lanceta por familia (hoy ocho) ojivales de vidrio emplomado, óculos dorados entre ellas,
      un anillo de lóbulos y un medallón central con el crismón. Los nombres corren por fuera, sobre la piedra. */
   const C=200, n=FAMILIAS.length, step=2*Math.PI/n, w=.34;
   const xy=(r,a)=>[C+r*Math.cos(a), C+r*Math.sin(a)];
@@ -30,7 +30,7 @@ function rosette(){
     const d=`M${P(72,a-w)} L${P(122,a-w)} Q${P(150,a-w*.92)} ${P(160,a)} Q${P(150,a+w*.92)} ${P(122,a+w)} L${P(72,a+w)} A72,72 0 0 0 ${P(72,a-w)} Z`;
     const came=`M${P(72,a)} L${P(128,a)} M${P(100,a-w)} A100,100 0 0 1 ${P(100,a+w)}`;
     const [ex,ey]=xy(140,a);
-    const words=f.nombre.replace('Órdenes ','').replace('Vida ','').replace('Congregaciones de vida ','').replace('Institutos ','').replace('Movimientos y nuevas comunidades','Movimientos').replace('Canónigos regulares','Canónigos').replace('Clérigos regulares','Clérigos');
+    const words=f.nombre.replace('Órdenes ','').replace('Vida ','').replace('Congregaciones de vida ','').replace('Institutos ','').replace('Movimientos y nuevas comunidades','Movimientos').replace('Canónigos regulares','Canónigos').replace('Clérigos regulares','Clérigos').replace('Vocaciones en la Iglesia diocesana','Diocesana');
     const label=words.charAt(0).toUpperCase()+words.slice(1);
     // texto curvo por fuera; abajo el arco va al revés para que se lea derecho
     const low=Math.sin(a)>0.2, sp=.55, rr=low?189:180;
@@ -44,7 +44,7 @@ function rosette(){
     ocs+=`<circle class="oc" cx="${ox.toFixed(2)}" cy="${oy.toFixed(2)}" r="8.5"/>`;
     for(const k of [0,.5]){const b=a+k*step;lobes+=`<path class="lobe" d="M${P(62,b-.2)} A13,13 0 0 1 ${P(62,b+.2)}"/>`;}
   });
-  return `<svg viewBox="0 0 400 400" role="img" aria-label="Rosetón de las siete familias de vida consagrada alrededor de Cristo">
+  return `<svg viewBox="0 0 400 400" role="img" aria-label="Rosetón de las ocho familias de vocaciones en la Iglesia alrededor de Cristo">
     <defs>${defs}
       <radialGradient id="rose-shine" cx="50%" cy="46%" r="52%">
         <stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity=".07"/>
@@ -72,14 +72,14 @@ function renderHome(){
     <div>
       <p class="eyebrow">Enciclopedia de carismas y espiritualidades</p>
       <h1 style="margin-top:12px">Muchos caminos,<br><em>un solo centro.</em></h1>
-      <p class="lead">La Iglesia es mucho más grande y diversa de lo que solemos ver. Monjes, frailes, consagrados en el mundo, movimientos de laicos: cada [[carisma|carisma]] es una manera particular de vivir el Evangelio, y todos tienen a Cristo en el centro.</p>
+      <p class="lead">La Iglesia es mucho más grande y diversa de lo que solemos ver. Monjes, frailes, consagrados en el mundo, movimientos de laicos, sacerdotes y diáconos diocesanos, matrimonios: cada [[carisma|carisma]] es una manera particular de vivir el Evangelio, y todos tienen a Cristo en el centro.</p>
       <p class="sub">Esta enciclopedia está pensada para jóvenes que quieren conocer las distintas formas de vida que la Iglesia propone para caminar hacia la santidad. Tocá una parte del rosetón para ir a cada familia.</p>
     </div>
-    <div><div class="rose">${rosette()}</div><p class="rose-cap">Siete grandes familias de vida consagrada y laical</p></div>
+    <div><div class="rose">${rosette()}</div><p class="rose-cap">Ocho grandes familias de vida consagrada, ministerial y laical</p></div>
   </section>
 
   <section class="intro" aria-label="Cómo usar la enciclopedia">
-    <div><h3>Cada ficha, diez preguntas</h3><p>Nombre, fundador, historia, carisma, espiritualidad, misión, hábito, santos, cómo formar parte y presencia en Argentina y Mendoza. Más un apartado para compartir en grupo.</p></div>
+    <div><h3>Cada ficha, diez preguntas</h3><p>Nombre, fundador, historia, carisma, espiritualidad, misión, hábito, santos, cómo formar parte y presencia en Argentina y Mendoza (en las vocaciones diocesanas, adaptadas: origen en la Iglesia, identidad, vestimenta y signos). Más un apartado para compartir en grupo.</p></div>
     <div><h3>Palabras difíciles, explicadas</h3><p>Los términos con subrayado punteado se pueden tocar para ver qué significan. También están todos juntos en el <a href="#glosario">glosario</a>.</p></div>
     <div><h3>Qué tan seguro es cada dato</h3><p>Los datos llevan una marca para que sepas de dónde vienen.</p>
       <div class="legend">${MK.v}${MK.g}${MK.t}${MK.p}</div></div>
@@ -87,7 +87,7 @@ function renderHome(){
 
   <section id="indice" class="idx">
     <details class="idx-box">
-      <summary><span><span class="eyebrow">Índice</span><b>Todas las fichas</b><small>${Object.keys(FICHAS).length} órdenes, congregaciones y movimientos, de la A a la Z</small></span><i class="chev" aria-hidden="true"></i></summary>
+      <summary><span><span class="eyebrow">Índice</span><b>Todas las fichas</b><small>${Object.keys(FICHAS).length} órdenes, congregaciones, movimientos y vocaciones diocesanas, de la A a la Z</small></span><i class="chev" aria-hidden="true"></i></summary>
     <div class="idx-grid">${Object.entries(FICHAS).sort((a,b)=>a[1].nombre.localeCompare(b[1].nombre,'es')).map(([id,x])=>`<a class="idx-item" data-fam="${x.familia}" href="#${id}"><i></i>${x.nombre}<small>${fam(x.familia).nombre}</small></a>`).join('')}</div>
     </details>
   </section>
@@ -95,7 +95,7 @@ function renderHome(){
   <section id="familias" class="fams-head" style="scroll-margin-top:64px">
     <p class="eyebrow">Las familias</p>
     <h2>Formas de vida en la Iglesia</h2>
-    <p>Los historiadores agrupan las órdenes, congregaciones y movimientos en grandes familias según cuándo nacieron y cómo viven. No es una clasificación rígida, pero ayuda a ubicarse.</p>
+    <p>Los historiadores agrupan las órdenes, congregaciones y movimientos en grandes familias según cuándo nacieron y cómo viven. No es una clasificación rígida, pero ayuda a ubicarse. La última familia es distinta: reúne las vocaciones que se viven en la diócesis, junto al obispo, o que nacen de un sacramento.</p>
   </section>
   ${FAMILIAS.map(f=>`
     <section class="fam" id="fam-${f.id}" data-fam="${f.id}">
