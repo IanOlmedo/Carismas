@@ -7,6 +7,9 @@ const fam = id => FAMILIAS.find(f => f.id === id);
 const terms = s => s.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (m, k, txt) =>
   GLOSARIO[k] ? `<button type="button" class="term" data-term="${k}">${txt}</button>` : txt);
 const band = f => `<div class="band pat-${f}" aria-hidden="true"></div>`;
+/* Sugerencias: van por mail a quien mantiene el sitio. No se publica nada sin que lo revise. */
+const MAIL_SUGERENCIAS = 'ianitoolmedo12@gmail.com';
+const mailto = (asunto, cuerpo) => `mailto:${MAIL_SUGERENCIAS}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
 /* Set de íconos simples (trazo, un solo color) para las 10 secciones de una ficha. Sin imágenes externas. */
 const ICONS = {
   nombre: `<svg viewBox="0 0 20 20"><path d="M10 2 17 5v5c0 5-3.5 7.5-7 8-3.5-.5-7-3-7-8V5Z"/></svg>`,
@@ -141,6 +144,22 @@ function renderHome(){
     <input id="gq" class="glos-search" type="search" placeholder="Por ejemplo: clausura, voto, fraile" autocomplete="off">
     <dl id="gl">${Object.entries(GLOSARIO).sort((a,b)=>a[1][0].localeCompare(b[1][0],'es')).map(([k,[t,d]])=>`<div class="gi" id="g-${k}" data-s="${(t+' '+d).toLowerCase()}"><dt>${t}</dt><dd>${d}</dd></div>`).join('')}</dl>
   </section>
+
+  <section class="sugerir" id="sugerir">
+    <p class="eyebrow">Sugerencias</p>
+    <h2>¿Falta algo o encontraste un error?</h2>
+    <p>Si conocés bien una comunidad, un carisma o un dato que falta, escribinos. Ninguna sugerencia se publica directo: primero se revisa y se chequea en fuentes, y recién después se agrega.</p>
+    <div class="opciones">
+      <a class="op" href="${mailto('Corrección para la Enciclopedia de Carismas', 'Ficha o familia: \n\nQué agregarías o corregirías: \n\nFuente (si la tenés): \n\nTu nombre (opcional): \n')}">
+        <b>Corregir o completar una ficha</b>
+        <span>Un dato que falta, está mal o quedó viejo en una ficha que ya existe.</span>
+      </a>
+      <a class="op" href="${mailto('Propuesta de carisma nuevo', 'Nombre del carisma o comunidad: \n\nFamilia a la que pertenecería (monástica, mendicante, canónigos, clérigos, apostólica, institutos seculares, movimientos, diocesana): \n\nPor qué te parece que falta: \n\nFuente para verificar los datos: \n\nTu nombre (opcional): \n')}">
+        <b>Proponer un carisma nuevo</b>
+        <span>Una orden, congregación, movimiento o vocación que todavía no está en la enciclopedia.</span>
+      </a>
+    </div>
+  </section>
   ${footer()}`;
   app.querySelectorAll('.lead').forEach(el=>el.innerHTML=terms(el.innerHTML));
   const gq=$('#gq');
@@ -207,6 +226,7 @@ function renderFicha(id){
         <header><h2>Fuentes consultadas</h2></header>
         <p>Lo marcado como verificado se contrastó con estas páginas el 12 de noviembre de 2026.</p>
         <ul class="sources">${x.fuentes.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ul>
+        <p class="note">¿Viste un error o te falta un dato en esta ficha? <a href="${mailto('Corrección: '+x.nombre, 'Ficha: '+x.nombre+'\n\nQué agregarías o corregirías: \n\nFuente (si la tenés): \n\nTu nombre (opcional): \n')}">Avisanos por mail</a>. Se revisa antes de publicarse.</p>
       </section>
     </article>
   </div>
