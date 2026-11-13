@@ -69,7 +69,7 @@ function renderHome(){
   document.title = 'Enciclopedia de Carismas';
   app.innerHTML = `
   <section class="def" aria-label="Qué es este sitio">
-    <p>${terms(`<dfn>Carismas</dfn> <span class="def-cat">(enciclopedia).</span> Guía para jóvenes con [[inquietud-vocacional|inquietudes vocacionales]]. Reúne las distintas formas de vida que la Iglesia propone para seguir a Jesús: sacerdocio, vida consagrada, órdenes y congregaciones, institutos seculares, movimientos laicales y matrimonio. Su objetivo es ayudarte a conocerlas, a descubrir hacia cuál te sentís llamado y a encontrar las herramientas que la Iglesia ofrece para [[discernimiento|discernir]]: el [[acompanamiento-espiritual|acompañamiento espiritual]], la oración, los retiros y el contacto con cada comunidad.`)}</p>
+    <p>${terms(`<dfn>Carismas</dfn> <span class="def-cat">(enciclopedia).</span> Guía para jóvenes con [[inquietud-vocacional|inquietudes vocacionales]]. Reúne las distintas formas de vida que la Iglesia propone para seguir a Jesús: <a href="#sacerdote-diocesano">sacerdocio</a>, vida consagrada, órdenes y congregaciones, institutos seculares, movimientos laicales y <a href="#matrimonio">matrimonio</a>. Su objetivo es ayudarte a conocerlas, a descubrir hacia cuál te sentís llamado y a encontrar las herramientas que la Iglesia ofrece para [[discernimiento|discernir]]: el [[acompanamiento-espiritual|acompañamiento espiritual]], la oración, los retiros y el contacto con cada comunidad.`)}</p>
   </section>
   <section class="hero">
     <div>
