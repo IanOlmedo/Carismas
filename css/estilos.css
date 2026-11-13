@@ -182,15 +182,16 @@ p{margin:0}
 .fams-head p{color:var(--muted);max-width:40em;margin-top:10px}
 .fam{background:var(--fam-tint);border-radius:6px 6px 18px 18px;margin-bottom:22px;overflow:hidden;border:1px solid var(--fam-line);scroll-margin-top:72px}
 .fam .band{height:16px;color:var(--fam-line)}
-.fam-in{padding:26px clamp(18px,4vw,36px) 30px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px}
+.fam-in{padding:26px clamp(18px,4vw,36px) 30px}
+.fam-in > aside{display:block;margin-top:26px;padding-top:22px;border-top:1px solid var(--fam-line)}
 .fam h3{font-size:clamp(30px,4vw,40px);color:var(--fam-ink)}
 .fam .era{font-family:var(--f-label);font-weight:600;font-size:12.5px;color:var(--fam-ink);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-.fam .what{margin-top:12px;max-width:36em}
-.fam .traits{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.fam .what{margin-top:12px;max-width:60ch}
+.fam .traits{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:8px;max-width:60ch}
 .fam .traits li{padding-left:20px;position:relative}
 .fam .traits li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:8px;transform:rotate(45deg);background:var(--fam-seg)}
 .fam aside h4{font-family:var(--f-label);font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fam-ink);margin:0 0 10px}
-.fichas{display:grid;gap:10px}
+.fichas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .fcard{display:block;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--fam-line);border-top:3px solid var(--fam-seg);border-radius:4px 4px 12px 12px;padding:14px 16px;transition:transform .2s, box-shadow .2s}
 .fcard:hover{transform:translateY(-2px);box-shadow:0 8px 24px -14px var(--fam-ink)}
 .fcard strong{font-family:var(--f-head);font-weight:650;letter-spacing:-.015em;font-size:20px;display:block;line-height:1.15}
@@ -326,7 +327,7 @@ article{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36
   .hero{grid-template-columns:1fr;padding-block:36px 24px;gap:28px}
   .rose{max-width:340px}
   .intro{grid-template-columns:1fr;gap:20px}
-  .fam-in{grid-template-columns:1fr}
+  .fichas{grid-template-columns:repeat(2,minmax(0,1fr))}
   .glos dl{grid-template-columns:1fr}
   .fh-in{grid-template-columns:1fr;grid-template-areas:"t" "r" "s"}
   article{grid-template-columns:1fr}
@@ -342,4 +343,5 @@ article{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36
   .timeline::before{left:52px}
   .timeline li{grid-template-columns:44px minmax(0,1fr);gap:20px}
   .timeline li::after{left:47px}
+  .fichas{grid-template-columns:1fr}
 }
