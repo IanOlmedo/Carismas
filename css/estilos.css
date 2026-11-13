@@ -92,6 +92,13 @@ p{margin:0}
 .top nav a:hover{color:var(--ink);background:var(--line)}
 
 /* hero */
+/* entrada de diccionario al comienzo del inicio: qué es el sitio */
+.def{margin-top:28px;padding-block:14px;border-block:1px solid var(--gold)}
+.def p{margin:0;max-width:62em;font-size:16px;line-height:1.6;color:var(--muted)}
+.def dfn{font-style:normal;font-family:var(--f-head);font-weight:700;letter-spacing:-.01em;font-size:1.12em;color:var(--ink)}
+.def .def-cat{font-family:var(--f-display);font-style:italic;color:var(--gold)}
+.def + .hero{padding-top:36px}
+@media (max-width: 480px){.def{margin-top:18px;padding-block:12px}.def p{font-size:15px;line-height:1.55}}
 .hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:60px 48px}
 .hero h1{font-weight:700;letter-spacing:-.035em;font-size:clamp(40px, 5.4vw, 62px);letter-spacing:.005em}
 .hero h1 em{font-style:normal;color:var(--accent)}

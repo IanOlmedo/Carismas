@@ -1,7 +1,11 @@
 # Enciclopedia de Carismas
 
-Enciclopedia web para jóvenes sobre las órdenes, congregaciones, institutos seculares y movimientos de la Iglesia Católica:
-60 fichas con historia, carisma, espiritualidad, santos, presencia en Argentina y Mendoza, material para compartir en grupo y glosario.
+Guía de orientación vocacional para jóvenes, con formato de enciclopedia. Presenta las formas de vida que la Iglesia Católica
+propone para seguir a Jesús (sacerdocio y diaconado, vida consagrada, órdenes y congregaciones, institutos seculares, movimientos
+y matrimonio) y las herramientas para discernir: acompañamiento espiritual, oración, retiros y contacto con cada comunidad.
+
+Cada ficha trae historia, carisma, espiritualidad, santos, cómo es el camino, presencia en Argentina y Mendoza, material para
+compartir en grupo y fuentes. Incluye un glosario.
 
 ## Abrir
 

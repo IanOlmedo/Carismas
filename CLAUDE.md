@@ -1,8 +1,10 @@
 # Enciclopedia de Carismas
 
-Sitio web estático (HTML + CSS + JS sin frameworks ni build) que presenta las órdenes, congregaciones,
-institutos seculares y movimientos de la Iglesia Católica para **jóvenes**. Lo usa Ian (Mendoza, Argentina)
-para preparar charlas y encuentros. Todo el contenido está en **español rioplatense** (voseo: "tocá", "podés").
+Sitio web estático (HTML + CSS + JS sin frameworks ni build): una **guía de orientación vocacional para jóvenes**
+con formato de enciclopedia. Presenta las formas de vida que la Iglesia Católica propone (sacerdocio y diaconado,
+vida consagrada, órdenes y congregaciones, institutos seculares, movimientos y matrimonio) y las herramientas para
+discernir (acompañamiento espiritual, oración, retiros, contacto con cada comunidad). Lo usa Ian (Mendoza, Argentina)
+para preparar charlas y encuentros. La definición del propósito aparece arriba de todo en el inicio (`.def` en `renderHome()`). Todo el contenido está en **español rioplatense** (voseo: "tocá", "podés").
 
 ## Reglas de contenido (obligatorias)
 
