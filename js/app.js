@@ -7,6 +7,20 @@ const fam = id => FAMILIAS.find(f => f.id === id);
 const terms = s => s.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (m, k, txt) =>
   GLOSARIO[k] ? `<button type="button" class="term" data-term="${k}">${txt}</button>` : txt);
 const band = f => `<div class="band pat-${f}" aria-hidden="true"></div>`;
+/* Set de íconos simples (trazo, un solo color) para las 10 secciones de una ficha. Sin imágenes externas. */
+const ICONS = {
+  nombre: `<svg viewBox="0 0 20 20"><path d="M10 2 17 5v5c0 5-3.5 7.5-7 8-3.5-.5-7-3-7-8V5Z"/></svg>`,
+  fundador: `<svg viewBox="0 0 20 20"><path d="M10 17V9"/><path d="M10 9C10 6 7.8 4 4 4c0 3.8 2.2 5.6 6 5Z"/><path d="M10 9c0-3 2.2-5 6-5 0 3.8-2.2 5.6-6 5Z"/></svg>`,
+  historia: `<svg viewBox="0 0 20 20"><path d="M5 3h10M5 17h10M5 3c0 4 2.3 5.6 5 7 2.7-1.4 5-3 5-7M5 17c0-4 2.3-5.6 5-7 2.7 1.4 5 3 5 7"/></svg>`,
+  carisma: `<svg viewBox="0 0 20 20"><path d="M10 2c3 4 5 7 5 10a5 5 0 1 1-10 0c0-3 2-6 5-10Z"/></svg>`,
+  espiritualidad: `<svg viewBox="0 0 20 20"><path d="M10 2v16M6 7h8"/></svg>`,
+  mision: `<svg viewBox="0 0 20 20"><path d="M17 3 3 9l6 2 2 6 6-14Z"/><path d="M9 11l8-8"/></svg>`,
+  habito: `<svg viewBox="0 0 20 20"><path d="M7 3 4 6v3l2-1v9h8V8l2 1V6l-3-3-2 2-2-2Z"/></svg>`,
+  santos: `<svg viewBox="0 0 20 20"><path d="m10 2 2.1 5.6L18 8l-4.5 3.8L15 18l-5-3.4L5 18l1.5-6.2L2 8l5.9-.4Z"/></svg>`,
+  "formar-parte": `<svg viewBox="0 0 20 20"><path d="M6 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M4 18h12"/><circle cx="12" cy="11" r=".9" fill="currentColor" stroke="none"/></svg>`,
+  presencia: `<svg viewBox="0 0 20 20"><path d="M10 18S4 11.5 4 7.5a6 6 0 0 1 12 0C16 11.5 10 18 10 18Z"/><circle cx="10" cy="7.5" r="2"/></svg>`
+};
+const secIcon = id => ICONS[id] ? `<span class="sec-ic" aria-hidden="true">${ICONS[id]}</span>` : '';
 /* Marca como "media columna" las secciones cortas que van de a dos seguidas, para aprovechar el ancho
    sin cambiar el orden de lectura. */
 const isShort = h => h.replace(/<[^>]+>/g,'').replace(/\$\{MK\.\w\}/g,'').trim().length < 420 && !/class="(timeline|saints|cols|steps)"/.test(h);
@@ -172,7 +186,7 @@ function renderFicha(id){
     <article>
       ${pairUp(x.secciones).map(s=>`
         <section class="sec${s.half?' half':''}" id="s-${s.id}">
-          <header><h2>${s.titulo}</h2>${MK[s.estado]}</header>
+          <header>${secIcon(s.id)}<h2>${s.titulo}</h2>${MK[s.estado]}</header>
           ${terms(s.html)}
         </section>`).join('')}
 
@@ -241,3 +255,24 @@ $('#tipL').addEventListener('click',e=>{
 });
 window.addEventListener('hashchange',route);
 route();
+
+/* tema claro/oscuro, con preferencia guardada */
+const temaBtn=$('#temaBtn');
+if(temaBtn){
+  temaBtn.addEventListener('click',()=>{
+    const osc=matchMedia('(prefers-color-scheme: dark)').matches;
+    const actual=document.documentElement.getAttribute('data-theme')||(osc?'dark':'light');
+    const next=actual==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    try{localStorage.setItem('tema',next)}catch(e){}
+    temaBtn.setAttribute('aria-pressed',String(next==='dark'));
+    temaBtn.setAttribute('aria-label',next==='dark'?'Cambiar a tema claro':'Cambiar a tema oscuro');
+  });
+}
+
+/* botón volver arriba */
+const arriba=$('#arriba');
+if(arriba){
+  window.addEventListener('scroll',()=>arriba.classList.toggle('on',window.scrollY>600),{passive:true});
+  arriba.addEventListener('click',()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+}

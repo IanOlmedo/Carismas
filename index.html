@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Geist:wght@300..700&display=swap">
 <link rel="stylesheet" href="css/estilos.css">
+<script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 </head>
 <body>
 <header class="top">
@@ -21,6 +22,10 @@
       <a href="#indice">Fichas</a>
       <a href="#glosario">Glosario</a>
     </nav>
+    <button type="button" id="temaBtn" class="theme-btn" aria-label="Cambiar a tema oscuro" aria-pressed="false">
+      <svg class="ic-sol" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4"/><path d="M10 1.5v2.4M10 16.1v2.4M18.5 10h-2.4M3.9 10H1.5M15.9 4.1l-1.7 1.7M5.8 14.2l-1.7 1.7M15.9 15.9l-1.7-1.7M5.8 5.8 4.1 4.1"/></svg>
+      <svg class="ic-luna" viewBox="0 0 20 20" aria-hidden="true"><path d="M17 12.4A7 7 0 0 1 7.6 3 7 7 0 1 0 17 12.4Z"/></svg>
+    </button>
   </div>
 </header>
 
@@ -33,6 +38,10 @@
     <a href="#glosario" id="tipL">Ver todo el glosario</a>
   </div>
 </div>
+
+<button type="button" id="arriba" class="to-top" aria-label="Volver arriba">
+  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15.5V4.5M4.5 10 10 4.5 15.5 10"/></svg>
+</button>
 
 <script src="js/datos/marcas.js"></script>
 <script src="js/datos/glosario.js"></script>

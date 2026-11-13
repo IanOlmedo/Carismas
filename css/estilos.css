@@ -49,15 +49,15 @@ img{max-width:100%}
 }
 /* colores por familia: verde (tiempo ordinario, la tierra y el trabajo), ocre del sayal, violeta,
    oro, azul mariano, gris pizarra (vida escondida en el mundo), rojo de Pentecostés */
-[data-fam="monacal"]{--h:145;--c:.055}
-[data-fam="mendicante"]{--h:58;--c:.07}
-[data-fam="canonigos"]{--h:310;--c:.065}
-[data-fam="clerigos"]{--h:82;--c:.08}
-[data-fam="apostolica"]{--h:250;--c:.075}
-[data-fam="seculares"]{--h:230;--c:.025}
-[data-fam="movimientos"]{--h:25;--c:.095}
+[data-fam="monacal"]{--h:145;--c:.047}
+[data-fam="mendicante"]{--h:58;--c:.058}
+[data-fam="canonigos"]{--h:310;--c:.054}
+[data-fam="clerigos"]{--h:82;--c:.065}
+[data-fam="apostolica"]{--h:250;--c:.062}
+[data-fam="seculares"]{--h:230;--c:.022}
+[data-fam="movimientos"]{--h:25;--c:.075}
 /* verde agua: ocupa el hueco libre entre el verde monástico y el gris de los seculares */
-[data-fam="diocesana"]{--h:190;--c:.06}
+[data-fam="diocesana"]{--h:190;--c:.05}
 [data-fam]{
   --fam-tint: oklch(var(--tint-l) calc(var(--c) * .42) var(--h));
   --fam-ink: oklch(var(--fink-l) calc(var(--c) * 2) var(--h));
@@ -90,6 +90,25 @@ p{margin:0}
 .top nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
 .top nav a{font-family:var(--f-label);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:999px}
 .top nav a:hover{color:var(--ink);background:var(--line)}
+.theme-btn{flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer}
+.theme-btn:hover{background:var(--line)}
+.theme-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.theme-btn .ic-luna{display:none}
+:root[data-theme="dark"] .theme-btn .ic-sol{display:none}
+:root[data-theme="dark"] .theme-btn .ic-luna{display:block}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .theme-btn .ic-sol{display:none}
+  :root:not([data-theme="light"]) .theme-btn .ic-luna{display:block}
+}
+
+/* botón volver arriba */
+.to-top{position:fixed;right:max(18px, env(safe-area-inset-right,0px));bottom:max(18px, env(safe-area-inset-bottom,0px));z-index:20;
+  width:44px;height:44px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:0 4px 14px oklch(0 0 0 / .14);
+  opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .2s}
+.to-top.on{opacity:1;transform:none;pointer-events:auto}
+.to-top svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.to-top:hover{background:var(--line)}
 
 /* hero */
 /* entrada de diccionario al comienzo del inicio: qué es el sitio */
@@ -222,7 +241,7 @@ button.term:hover{color:var(--accent)}
 .fh-in{padding:26px clamp(18px,4vw,40px) 30px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-areas:"t t" "r s";gap:18px 40px;align-items:start}
 .fh-title{grid-area:t}
 .fh-in .resumen{grid-area:r;max-width:none}
-.fh-side{grid-area:s;padding-top:2px}
+.fh-side{grid-area:s;align-self:start;background:var(--surface);border:1px solid var(--fam-line);border-radius:14px;padding:18px 20px}
 .crumb{font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
 .crumb a{color:var(--fam-ink);font-weight:600;text-decoration:none}
 .ficha-hero h1{font-weight:700;letter-spacing:-.035em;font-size:clamp(38px,6.4vw,68px);color:var(--fam-ink)}
@@ -248,9 +267,11 @@ article{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:36
 .sec{grid-column:1/-1;padding-block:6px 30px;scroll-margin-top:76px;min-width:0}
 .sec.half{grid-column:auto}
 .sec:not(.half) > p,.sec:not(.half) > ul.dots{max-width:46em}
-.sec > header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--line);position:relative}
+.sec > header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--line);position:relative}
 .sec > header::after{content:"";position:absolute;left:0;bottom:-2px;width:56px;height:3px;background:var(--gold);border-radius:2px}
 .sec h2{font-size:clamp(26px,3.4vw,32px)}
+.sec-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:999px;background:var(--fam-tint);color:var(--fam-seg)}
+.sec-ic svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .sec p + p{margin-top:12px}
 .sec ul.dots{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}
 .sec ul.dots li{padding-left:20px;position:relative}
