@@ -737,6 +737,18 @@ $('#tipL').addEventListener('click',e=>{
 window.addEventListener('hashchange',route);
 route();
 
+/* desplegables del menú: se abren con clic, se cierran al elegir, al tocar afuera o con Escape */
+const desplegables=[...document.querySelectorAll('.dd')];
+const cerrarMenus=(salvo)=>desplegables.forEach(d=>{if(d!==salvo){d.querySelector('.dd-btn').setAttribute('aria-expanded','false');d.querySelector('.dd-menu').hidden=true;}});
+desplegables.forEach(d=>{
+  const b=d.querySelector('.dd-btn'), m=d.querySelector('.dd-menu');
+  b.addEventListener('click',()=>{const abrir=m.hidden;cerrarMenus(d);m.hidden=!abrir;b.setAttribute('aria-expanded',String(abrir));});
+  m.addEventListener('click',e=>{if(e.target.closest('a'))cerrarMenus();});
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.dd'))cerrarMenus();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&desplegables.some(d=>!d.querySelector('.dd-menu').hidden)){cerrarMenus();document.activeElement?.blur?.();}});
+window.addEventListener('hashchange',()=>cerrarMenus());
+
 /* tema claro/oscuro, con preferencia guardada */
 const temaBtn=$('#temaBtn');
 if(temaBtn){

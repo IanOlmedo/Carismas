@@ -18,13 +18,22 @@
       Carismas
     </a>
     <nav aria-label="Secciones">
-      <a href="#brujula">Brújula</a>
-      <a href="#discernir">Discernir</a>
+      <div class="dd">
+        <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-explorar">Explorar<i aria-hidden="true"></i></button>
+        <div class="dd-menu" id="dd-explorar" hidden>
+          <a href="#familias"><b>Familias</b><span>Las ocho formas de vida en la Iglesia y sus fichas</span></a>
+          <a href="#glosario"><b>Glosario</b><span>Palabras difíciles, explicadas</span></a>
+        </div>
+      </div>
+      <div class="dd">
+        <button type="button" class="dd-btn" aria-expanded="false" aria-controls="dd-discernir">Discernir<i aria-hidden="true"></i></button>
+        <div class="dd-menu" id="dd-discernir" hidden>
+          <a href="#brujula"><b>Brújula</b><span>¿Con qué te identificás? Diez preguntas</span></a>
+          <a href="#discernir"><b>Guía de discernimiento</b><span>Por dónde empezar y a quién acudir</span></a>
+        </div>
+      </div>
       <a href="#rezar">Rezar</a>
-      <a href="#familias">Familias</a>
-      <a href="#indice">Fichas</a>
-      <a href="#glosario">Glosario</a>
-      <a href="#sugerir">Sugerir</a>
+      <a href="#sugerir" class="nav-sug">Sugerir</a>
     </nav>
     <button type="button" id="temaBtn" class="theme-btn" aria-label="Cambiar a tema oscuro" aria-pressed="false">
       <svg class="ic-sol" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="4"/><path d="M10 1.5v2.4M10 16.1v2.4M18.5 10h-2.4M3.9 10H1.5M15.9 4.1l-1.7 1.7M5.8 14.2l-1.7 1.7M15.9 15.9l-1.7-1.7M5.8 5.8 4.1 4.1"/></svg>
