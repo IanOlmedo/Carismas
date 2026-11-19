@@ -29,15 +29,33 @@ js/datos/fichas/_base.js   const FICHAS = {}
 js/datos/fichas/<familia>.js  Object.assign(FICHAS, {...}) con las fichas de esa familia
 js/datos/brujula.js        Brújula (#brujula): RASGOS, PREGUNTAS, AFINIDAD de cada ficha y SANTOS_BRUJULA
 js/datos/guia.js           GUIA: guía de discernimiento (#discernir), con secciones y fuentes como una ficha
-js/app.js                  Render, rosetón, ruteo por hash, glosario emergente
+js/datos/oraciones.js      ORACIONES, MISTERIOS del Rosario y ROSARIO_PORQUE para la página Rezar (#rezar)
+js/liturgia.js             LITURGIA: calendario litúrgico calculado (tiempo, semana, color, ciclos, salterio, misterios del día)
+js/app.js                  Render, rosetón, ruteo por hash, glosario emergente, Rezar y Rosario paso a paso
 herramientas/verificar.js  Chequeo automático con Playwright
 ```
 
 No hay módulos ES a propósito: el sitio tiene que abrir con doble clic (file://). El orden de los `<script>` importa:
-`marcas` → `glosario` → `familias` → `fichas/_base` → fichas por familia → `brujula` → `guia` → `app`.
+`marcas` → `glosario` → `familias` → `fichas/_base` → fichas por familia → `brujula` → `guia` → `oraciones` → `liturgia` → `app`.
 
 **Brújula:** cada ficha nueva tiene que sumarse a `AFINIDAD` en `js/datos/brujula.js` (si no, `npm run verificar` avisa).
 Los santos sin ficha van con datos prudentes y se muestran como "conocimiento general".
+
+**Rezar (#rezar):** muestra el día litúrgico, la pregunta del día, el Rosario paso a paso (con los misterios que
+tocan según el día, *Rosarium Virginis Mariae* 38), el Ángelus o el Regina Caeli según el tiempo, las oraciones y
+enlaces a las lecturas (Ciudad Redonda, Vatican News) y a la Liturgia de las Horas (iBreviary).
+- Las oraciones se copian **textuales** de una fuente oficial (hoy, el Compendio del Catecismo, Apéndice). Para sumar
+  una: agregarla a `ORACIONES` con `grupo`, `fuente` (índice en `ORACION_FUENTES`) y `estado`; `tiempo: 'pascua'`
+  si es propia de un tiempo. No copiar textos de la Liturgia de las Horas ni del leccionario (son traducciones
+  protegidas y cambian cada día): se enlazan.
+- `js/liturgia.js` calcula el calendario general (Pascua, Adviento, semanas, color, ciclo A/B/C, año I/II, salterio).
+  No calcula fiestas de santos ni traslados propios de Argentina; por eso siempre se enlaza a las lecturas.
+  Si se toca, `npm run verificar` lo compara con fechas conocidas.
+
+**Vitral y pregunta del día:** el rosetón del inicio se enciende con las fichas leídas (cada familia en proporción)
+y con los días en que se terminó un Rosario (óculos dorados). Se guarda solo en el navegador de cada persona
+(`localStorage`: `fichasVistas`, `rosariosRezados`). La pregunta del día sale de `compartir.preguntas` de las fichas
+y cambia a medianoche.
 
 ## Marcas de verificación (`MK`)
 

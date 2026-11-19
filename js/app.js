@@ -39,6 +39,7 @@ function rosette(){
   /* Rosetón gótico: una lanceta por familia (hoy ocho) ojivales de vidrio emplomado, óculos dorados entre ellas,
      un anillo de lóbulos y un medallón central con el crismón. Los nombres corren por fuera, sobre la piedra. */
   const C=200, n=FAMILIAS.length, step=2*Math.PI/n, w=.34;
+  const vistas=new Set(guardado.leer('fichasVistas')), dias=guardado.leer('rosariosRezados').length;
   const xy=(r,a)=>[C+r*Math.cos(a), C+r*Math.sin(a)];
   const P=(r,a)=>xy(r,a).map(v=>v.toFixed(2)).join(',');
   let segs='', ocs='', lobes='', defs='';
@@ -53,12 +54,13 @@ function rosette(){
     const low=Math.sin(a)>0.2, sp=.55, rr=low?189:180;
     const arc=low?`M${P(rr,a+sp)} A${rr},${rr} 0 0 0 ${P(rr,a-sp)}`:`M${P(rr,a-sp)} A${rr},${rr} 0 0 1 ${P(rr,a+sp)}`;
     defs+=`<path id="lb-${f.id}" d="${arc}"/>`;
-    segs+=`<g class="seg" data-fam="${f.id}" tabindex="0" role="link" aria-label="${f.nombre}">
+    const luz=f.fichas.length ? f.fichas.filter(id=>vistas.has(id)).length/f.fichas.length : 0;
+    segs+=`<g class="seg${luz>=1?' llena':''}" data-fam="${f.id}" style="--luz:${Math.round(38+62*luz)}%" tabindex="0" role="link" aria-label="${f.nombre}">
       <path class="glass" d="${d}"/><path class="came" d="${came}"/>
       <circle class="eye" cx="${ex.toFixed(2)}" cy="${ey.toFixed(2)}" r="7"/>
       <text><textPath href="#lb-${f.id}" startOffset="50%" text-anchor="middle">${label}</textPath></text></g>`;
     const [ox,oy]=xy(146,a+step/2);
-    ocs+=`<circle class="oc" cx="${ox.toFixed(2)}" cy="${oy.toFixed(2)}" r="8.5"/>`;
+    ocs+=`<circle class="oc${i<dias?' on':''}" cx="${ox.toFixed(2)}" cy="${oy.toFixed(2)}" r="8.5"/>`;
     for(const k of [0,.5]){const b=a+k*step;lobes+=`<path class="lobe" d="M${P(62,b-.2)} A13,13 0 0 1 ${P(62,b+.2)}"/>`;}
   });
   return `<svg viewBox="0 0 400 400" role="img" aria-label="Rosetón de las ocho familias de vocaciones en la Iglesia alrededor de Cristo">
@@ -95,8 +97,9 @@ function renderHome(){
       <p class="lead">La Iglesia es mucho más grande y diversa de lo que solemos ver. Monjes, frailes, consagrados en el mundo, movimientos de laicos, sacerdotes y diáconos diocesanos, matrimonios: cada [[carisma|carisma]] es una manera particular de vivir el Evangelio, y todos tienen a Cristo en el centro.</p>
       <p class="sub">Esta enciclopedia está pensada para jóvenes que quieren conocer las distintas formas de vida que la Iglesia propone para caminar hacia la santidad. Tocá una parte del rosetón para ir a cada familia.</p>
     </div>
-    <div><div class="rose">${rosette()}</div><p class="rose-cap">Ocho grandes familias de vida consagrada, ministerial y laical</p></div>
+    <div><div class="rose">${rosette()}</div><p class="rose-cap">Ocho grandes familias de vida consagrada, ministerial y laical</p>${vitralCap()}</div>
   </section>
+  ${franjaHoy()}
 
   <section class="intro" aria-label="Cómo usar la enciclopedia">
     <div><h3>Cada ficha, diez preguntas</h3><p>Nombre, fundador, historia, carisma, espiritualidad, misión, hábito, santos, cómo formar parte y presencia en Argentina y Mendoza (en las vocaciones diocesanas, adaptadas: origen en la Iglesia, identidad, vestimenta y signos). Más un apartado para compartir en grupo.</p></div>
@@ -174,6 +177,10 @@ function renderHome(){
   </section>
   ${footer()}`;
   app.querySelectorAll('.lead').forEach(el=>el.innerHTML=terms(el.innerHTML));
+  const vr=$('#vitralReset');
+  if(vr) vr.addEventListener('click',()=>{
+    if(!vr.dataset.ok){vr.dataset.ok='1';vr.textContent='¿Seguro? Tocá de nuevo para apagarlo';return;}
+    guardado.borrar('fichasVistas','rosariosRezados');renderHome();document.querySelector('.rose').scrollIntoView({block:'center'});});
   const gq=$('#gq');
   gq.addEventListener('input',()=>{const q=gq.value.trim().toLowerCase();app.querySelectorAll('.gi').forEach(el=>el.hidden=q && !el.dataset.s.includes(q));});
   app.querySelectorAll('.seg').forEach(g=>{
@@ -307,6 +314,279 @@ function renderGuia(){
   tocViva();
 }
 /* =========================================================
+   LO QUE QUEDA GUARDADO EN ESTE NAVEGADOR (solo para quien lo usa; no se manda a ningún lado)
+   fichasVistas: ids de fichas abiertas · rosariosRezados: días (AAAA-MM-DD) en que se terminó un Rosario
+   ========================================================= */
+const guardado = {
+  leer(k){ try{ const v=JSON.parse(localStorage.getItem(k)); return Array.isArray(v)?v:[]; }catch(e){ return []; } },
+  sumar(k,v){ const a=this.leer(k); if(!a.includes(v)){ a.push(v); try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} } },
+  borrar(...ks){ ks.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} }); }
+};
+const isoLocal = f => `${f.getFullYear()}-${String(f.getMonth()+1).padStart(2,'0')}-${String(f.getDate()).padStart(2,'0')}`;
+const fechaLarga = f => f.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+/* El vitral del inicio se enciende con las fichas leídas (cada familia, en proporción) y con los días de Rosario
+   (los óculos dorados entre las lancetas). El centro, Cristo, está siempre encendido. */
+function vitralCap(){
+  const vistas=guardado.leer('fichasVistas').filter(id=>FICHAS[id]).length, dias=guardado.leer('rosariosRezados').length, total=Object.keys(FICHAS).length;
+  if(!vistas && !dias) return `<p class="vitral-cap">El vitral se va encendiendo a medida que leés fichas y rezás el <a href="#rezar-rosario">Rosario</a>. El centro, Cristo, ya está encendido.</p>`;
+  const partes=[];
+  if(vistas) partes.push(`${vistas} de ${total} fichas leídas`);
+  if(dias) partes.push(`${dias} ${dias===1?'día':'días'} de Rosario`);
+  return `<p class="vitral-cap">Tu vitral: ${partes.join(' · ')}. Se guarda solo en este dispositivo. <button type="button" class="bq-link" id="vitralReset">Apagarlo y empezar de nuevo</button></p>`;
+}
+
+/* Una pregunta por día, tomada de las preguntas para compartir de las fichas. Cambia a medianoche
+   y es la misma para todos los que abran el sitio ese día. */
+function preguntaDelDia(f){
+  f=f||new Date();
+  const todas=[];
+  Object.entries(FICHAS).forEach(([id,x])=>x.compartir.preguntas.forEach(q=>todas.push([q,id])));
+  const n=Math.floor(Date.UTC(f.getFullYear(),f.getMonth(),f.getDate())/864e5);
+  return todas[((n*7919)%todas.length+todas.length)%todas.length];
+}
+
+function franjaHoy(){
+  const L=LITURGIA.dia(), m=MISTERIOS[LITURGIA.misterios()], [q,id]=preguntaDelDia();
+  return `<section class="hoy" aria-label="Hoy">
+    <a class="hoy-card" href="#rezar">
+      <span class="eyebrow">Hoy en la Iglesia</span>
+      <b>${L.nombre}</b>
+      <span class="hoy-meta"><i class="lit-dot" style="background:${L.colorValor}"></i>${L.colorNombre} · ${m.nombre}</span>
+      <span class="go">Rezar hoy →</span>
+    </a>
+    <div class="hoy-card hoy-q">
+      <span class="eyebrow">Pregunta del día</span>
+      <p>${q}</p>
+      <a class="go" href="#${id}">Sale de la ficha: ${FICHAS[id].nombre} →</a>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   REZAR (#rezar): el día litúrgico, el Rosario paso a paso y las oraciones de siempre.
+   ========================================================= */
+const lineasOracion = t => t.map(l=>l.startsWith('℣ ')?`<span class="vr"><b aria-label="Versículo">℣</b> ${l.slice(2)}</span>`
+  : l.startsWith('℟ ')?`<span class="vr r"><b aria-label="Respuesta">℟</b> ${l.slice(2)}</span>` : `<span>${l}</span>`).join('');
+
+function renderRezar(){
+  const hoy=new Date(), L=LITURGIA.dia(hoy), setHoy=LITURGIA.misterios(hoy), [q,qid]=preguntaDelDia(hoy);
+  const mediodia = ORACIONES[L.pascual ? 'regina-caeli' : 'angelus'];
+  document.title = 'Rezar · Enciclopedia de Carismas';
+  const semana = Array.from({length:7},(_,k)=>{const d=new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()+k);return {d, L:LITURGIA.dia(d), m:LITURGIA.misterios(d)};});
+  const IB='https://www.ibreviary.com/m2/breviario.php?lang=es';
+  const horas=[['Oficio de Lecturas','ufficio_delle_letture','En cualquier momento del día'],['Laudes','lodi','Oración de la mañana'],['Hora Intermedia','ora_media','A media jornada'],['Vísperas','vespri','Oración de la tarde'],['Completas','compieta','Antes de dormir']];
+  const secs=[['hoy','Hoy en la liturgia'],['pregunta','Pregunta del día'],['rosario','El Rosario'],['mediodia',mediodia.titulo],['oraciones','Oraciones'],['horas','Liturgia de las Horas'],['fuentes','Fuentes']];
+
+  app.innerHTML = `
+  <section class="ficha-hero" data-fam="rezar">
+    ${band('rezar')}
+    <div class="fh-in">
+      <div class="fh-title">
+        <p class="crumb"><a href="#inicio">← Inicio</a></p>
+        <p class="eyebrow" style="margin-top:10px">Rezar</p>
+        <h1>Rezar con la Iglesia</h1>
+      </div>
+      <p class="resumen">Para conocer un carisma hay que conocer cómo reza. Acá podés rezar el Rosario paso a paso, con los misterios que tocan hoy, encontrar las oraciones de siempre y llegar a las lecturas y a la Liturgia de las Horas del día. Todo sigue el calendario de la Iglesia: lo que ves cambia según el día y el tiempo litúrgico.</p>
+      <div class="fh-side">
+        <p class="eyebrow">${fechaLarga(hoy)}</p>
+        <p class="rz-dia">${L.nombre}</p>
+        <p class="rz-meta"><i class="lit-dot" style="background:${L.colorValor}"></i>Color litúrgico: ${L.colorNombre.toLowerCase()}</p>
+        <a class="bq-btn gd-cta" href="#rezar-rosario" data-to="s-rosario">Rezar el Rosario de hoy</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ficha-body" data-fam="rezar">
+    <nav class="toc" aria-label="Contenido de la página">
+      <span class="eyebrow">En esta página</span>
+      <ol>${secs.map(([id,t])=>`<li><a href="#rezar-${id}" data-to="s-${id}">${t}</a></li>`).join('')}</ol>
+      <div class="facts">
+        <div>Tiempo<b>${L.tiempo==='Ordinario'?'Tiempo Ordinario':L.tiempo}</b></div>
+        <div>Misterios de hoy<b>${MISTERIOS[setHoy].nombre}</b></div>
+        ${L.salterio?`<div>Salterio<b>Semana ${L.salterioRom}</b></div>`:''}
+      </div>
+    </nav>
+    <article>
+      <section class="sec" id="s-hoy">
+        <header><h2>Hoy en la liturgia</h2>${MK.v}</header>
+        <p>La Iglesia vive el año como un camino alrededor de Jesús: Adviento, Navidad, Cuaresma, Pascua y el Tiempo Ordinario. Cada día tiene sus lecturas y su color.</p>
+        <div class="cols">
+          <div class="box">
+            <h3>${L.nombre}</h3>
+            <ul class="dots rz-lista">
+              <li>Color: <b>${L.colorNombre.toLowerCase()}</b>${L.color==='rosa'?' (el rosa es optativo en este domingo)':''}</li>
+              <li>Domingos de este año litúrgico: lecturas del <b>ciclo ${L.ciclo}</b></li>
+              ${L.tiempo==='Ordinario'&&L.dow!==0?`<li>Primera lectura de los días de semana: <b>año ${L.anioPar?'par (II)':'impar (I)'}</b></li>`:''}
+              ${L.salterio?`<li>Liturgia de las Horas: <b>semana ${L.salterioRom}</b> del salterio</li>`:`<li>Liturgia de las Horas: salmos propios de este día</li>`}
+            </ul>
+            ${L.nota?`<p class="note">${L.nota}</p>`:''}
+          </div>
+          <div class="box">
+            <h3>Las lecturas de hoy</h3>
+            <p>Las lecturas cambian si hoy se celebra una solemnidad o una fiesta. Estos sitios ya lo tienen en cuenta:</p>
+            <p class="rz-links"><a href="${ORACION_FUENTES[3][1]}" target="_blank" rel="noopener">Evangelio y lecturas (Ciudad Redonda) ↗</a><a href="${ORACION_FUENTES[4][1]}" target="_blank" rel="noopener">Evangelio del día (Vatican News) ↗</a></p>
+          </div>
+        </div>
+        <h3 class="gd-h3">Esta semana</h3>
+        <ol class="rz-semana">${semana.map(({d,L:l,m},k)=>`
+          <li${k===0?' class="hoy"':''} title="${l.nombre}"><span class="rz-sd">${k===0?'Hoy':k===1?'Mañana':LITURGIA.SEMANA[d.getDay()]}</span><span class="rz-sn">${d.getDate()}</span><i class="lit-dot" style="background:${l.colorValor}"></i><span class="rz-sm">${MISTERIOS[m].nombre.replace('Misterios ','')}</span></li>`).join('')}</ol>
+        <p class="note">El día, el color, los ciclos y la semana del salterio se calculan con las reglas del calendario general de la Iglesia (comprobado con iBreviary). No incluyen las fiestas de santos ni los cambios propios de Argentina: si hoy hay una solemnidad o una fiesta, mirá las lecturas en los enlaces.</p>
+      </section>
+
+      <section class="sec" id="s-pregunta">
+        <header><h2>Pregunta del día</h2></header>
+        <div class="rz-q"><p>${q}</p><a href="#${qid}">Sale de la ficha: ${FICHAS[qid].nombre} →</a></div>
+        <p class="note">No es para contestar rápido: es para llevártela y volver a ella en algún momento del día. Mañana va a haber otra.</p>
+      </section>
+
+      <section class="sec" id="s-rosario">
+        <header><h2>El Rosario</h2>${MK.v}</header>
+        <p>Una oración sencilla para mirar la vida de Jesús con los ojos de María. Tocá <b>Siguiente</b> y andá cuenta por cuenta: el rosario de la derecha te muestra dónde estás. Si te sabés las oraciones, podés esconder el texto.</p>
+        <div class="ros" id="ros"></div>
+      </section>
+
+      <section class="sec" id="s-mediodia">
+        <header><h2>${mediodia.titulo}</h2>${MK[mediodia.estado]}</header>
+        <p>${mediodia.nota} ${L.pascual?'Hoy estamos en tiempo de Pascua.':''}</p>
+        <p class="or-txt">${lineasOracion(mediodia.texto)}</p>
+      </section>
+
+      <section class="sec" id="s-oraciones">
+        <header><h2>Oraciones</h2>${MK.v}</header>
+        <p>Las de siempre, con el texto oficial en español. Tocá una para abrirla.</p>
+        ${GRUPOS_ORACION.map(([g,t])=>{const os=Object.entries(ORACIONES).filter(([,o])=>o.grupo===g);return os.length?`
+          <h3 class="gd-h3">${t}</h3>
+          <div class="or-lista">${os.map(([id,o])=>`
+            <details class="or" id="or-${id}"><summary>${o.titulo}${o.tiempo==='pascua'?' <small>tiempo de Pascua</small>':''}</summary>
+              ${o.nota?`<p class="or-nota">${o.nota}</p>`:''}<p class="or-txt">${lineasOracion(o.texto)}</p></details>`).join('')}</div>`:''}).join('')}
+      </section>
+
+      <section class="sec" id="s-horas">
+        <header><h2>Liturgia de las Horas</h2>${MK.g}</header>
+        <p>Es la oración oficial de la Iglesia: salmos, lecturas y cantos repartidos a lo largo del día, para que todo el día quede ofrecido a Dios. La rezan los sacerdotes, los diáconos y los consagrados, y muchas comunidades contemplativas la cantan en coro; cualquier laico puede sumarse. Los salmos se reparten en cuatro semanas (el salterio), que se van repitiendo.</p>
+        <div class="rz-horas">${horas.map(([n,s,d])=>`<a class="rz-hora" href="${IB}&s=${s}" target="_blank" rel="noopener"><b>${n}</b><span>${d}</span></a>`).join('')}</div>
+        <p class="note">Los enlaces abren la hora de hoy en iBreviary${L.salterio?` (hoy, semana ${L.salterioRom} del salterio)`:''}. Los textos no se copian acá porque son traducciones oficiales protegidas y cambian todos los días. Si es tu primera vez, empezá por Completas: es corta y se reza antes de dormir.</p>
+      </section>
+
+      <section class="sec" id="s-fuentes">
+        <header><h2>Fuentes consultadas</h2></header>
+        <p>Los textos de las oraciones se copiaron del Compendio del Catecismo; los misterios y su distribución por días, del Compendio y de la carta Rosarium Virginis Mariae (n. 38), el 19 de noviembre de 2026. La jaculatoria y las citas bíblicas de cada misterio son de conocimiento general.</p>
+        <ul class="sources">${ORACION_FUENTES.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ul>
+        <p class="note">¿Querés que sumemos una oración? <a href="${mailto('Oración para sumar a la Enciclopedia de Carismas', 'Oración: \n\nFuente del texto (si la tenés): \n\nTu nombre (opcional): \n')}">Escribinos</a>. Se agrega solo con un texto de fuente oficial.</p>
+      </section>
+    </article>
+  </div>
+  ${footer()}`;
+  tocViva();
+  app.querySelectorAll('.fh-side a[data-to]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.dataset.to).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}));
+  rosario($('#ros'), setHoy);
+}
+
+/* ---------- Rosario paso a paso ---------- */
+const ORDINAL = ['Primer','Segundo','Tercer','Cuarto','Quinto'];
+function pasosRosario(set){
+  const P=[], add=(o,b,etq,porque,extra)=>P.push({o,b,etq,porque,...extra});
+  const big=k=>k===0?'pM':'l'+(k*11-1);
+  add('senal-cruz','cruz','Comienzo','inicio');
+  add('credo','cruz','Comienzo','inicio');
+  add('padre-nuestro','pPN','Comienzo','padre-nuestro');
+  ['por la fe','por la esperanza','por la caridad'].forEach((x,j)=>add('ave-maria','pA'+(j+1),`Comienzo · Ave María ${j+1} de 3, ${x}`,'inicio'));
+  add('gloria','pA3','Comienzo','gloria');
+  for(let k=0;k<5;k++){
+    const et=`${ORDINAL[k]} misterio ${set.slice(0,-1)}`;
+    add(null,big(k),et,'misterio',{misterio:k});
+    add('padre-nuestro',big(k),et,'padre-nuestro');
+    for(let j=0;j<10;j++) add('ave-maria','l'+(k*11+j),`${et} · Ave María ${j+1} de 10`,'ave-maria',{ave:true});
+    add('gloria','l'+(k*11+9),et,'gloria');
+    add('jaculatoria','l'+(k*11+9),et,'jaculatoria');
+  }
+  add('salve','medalla','Final','final');
+  add(null,'medalla','Final','final',{papa:true});
+  add('oracion-rosario','medalla','Final','final');
+  add('senal-cruz','cruz','Final','final');
+  return P;
+}
+function svgRosario(){
+  const cx=150, cy=132, R=104, b=[];
+  for(let t=0;t<54;t++){
+    const a=(90+14+t*(332/53))*Math.PI/180, grande=t%11===10;
+    b.push(`<circle class="cta${grande?' g':''}" data-b="l${t}" cx="${(cx+R*Math.cos(a)).toFixed(1)}" cy="${(cy+R*Math.sin(a)).toFixed(1)}" r="${grande?7:4.6}"/>`);
+  }
+  const pend=[['pM',268,7],['pA3',290,4.6],['pA2',305,4.6],['pA1',320,4.6],['pPN',343,7]];
+  pend.forEach(([id,y,r])=>b.push(`<circle class="cta${r>5?' g':''}" data-b="${id}" cx="${cx}" cy="${y}" r="${r}"/>`));
+  return `<svg viewBox="0 0 300 410" aria-hidden="true">
+    <circle class="cad" cx="${cx}" cy="${cy}" r="${R}"/><line class="cad" x1="${cx}" y1="${cy+R}" x2="${cx}" y2="362"/>
+    ${b.join('')}
+    <path class="cta medalla" data-b="medalla" d="M${cx} ${cy+R-11} L${cx+9} ${cy+R} L${cx} ${cy+R+13} L${cx-9} ${cy+R} Z"/>
+    <path class="cta cruz" data-b="cruz" d="M${cx-4} 360h8v12h12v8h-12v26h-8v-26h-12v-8h12Z"/>
+  </svg>`;
+}
+function rosario(el, setHoy){
+  let set=setHoy, i=0, compacto=false, fin=false, P=pasosRosario(set);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.innerHTML=`
+    <div class="ros-tabs" role="group" aria-label="Misterios">${ORDEN_MISTERIOS.map(k=>`<button type="button" class="ros-tab" data-set="${k}" aria-pressed="${k===set}" style="--th:${MISTERIOS[k].tono}">${MISTERIOS[k].nombre.replace('Misterios ','')}<small>${k===setHoy?'hoy':MISTERIOS[k].dias}</small></button>`).join('')}</div>
+    <div class="ros-main">
+      <div class="ros-card" id="rosCard" tabindex="-1"></div>
+      <div class="ros-svg">${svgRosario()}</div>
+    </div>
+    <p class="note">Los misterios de cada día son los que propone Juan Pablo II en Rosarium Virginis Mariae (n. 38): ${ORDEN_MISTERIOS.map(k=>`${MISTERIOS[k].nombre.replace('Misterios ','').toLowerCase()}, ${MISTERIOS[k].dias}`).join('; ')}. La misma carta aclara que no es una regla rígida: se pueden cambiar según el tiempo litúrgico o lo que se esté viviendo.</p>`;
+  const card=$('#rosCard');
+  const pintar=()=>{
+    el.querySelectorAll('.ros-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.set===set)));
+    el.style.setProperty('--th',MISTERIOS[set].tono);
+    const hechas=new Set(P.slice(0,fin?P.length:i).map(p=>p.b));
+    el.querySelectorAll('[data-b]').forEach(c=>{c.classList.toggle('hecha',hechas.has(c.dataset.b));c.classList.toggle('on',!fin&&P[i].b===c.dataset.b);});
+    if(fin){
+      card.innerHTML=`<p class="eyebrow">Rosario terminado</p><h3 class="ros-t">Que la Virgen te acompañe</h3>
+        <p>Rezaste los ${MISTERIOS[set].nombre.toLowerCase()}. En el vitral del inicio se encendió un óculo dorado por este día.</p>
+        <div class="ros-nav"><button type="button" class="bq-link" id="rosAtras">← Volver al último paso</button><button type="button" class="bq-btn" id="rosOtra">Empezar de nuevo</button></div>`;
+      $('#rosOtra').addEventListener('click',()=>{fin=false;i=0;pintar();});
+      $('#rosAtras').addEventListener('click',()=>{fin=false;i=P.length-1;pintar();});
+      card.focus({preventScroll:true});
+      return;
+    }
+    const p=P[i], M=MISTERIOS[set], o=p.o&&ORACIONES[p.o], pq=ROSARIO_PORQUE[p.porque];
+    let cuerpo;
+    if(p.misterio!=null){
+      const [t,cita]=M.lista[p.misterio];
+      cuerpo=`<h3 class="ros-t">${t}</h3>
+        <p class="ros-cita">${cita?`Para leer: <b>${cita}</b> ${MK.g}`:`No hay un relato bíblico de la Asunción: es una verdad de fe que el papa Pío XII proclamó como dogma en 1950. ${MK.g}`}</p>
+        <p class="ros-sil">Quedate unos segundos en silencio, mirando la escena. ¿Qué ves? ¿Qué te dice a vos?</p>`;
+    } else if(p.papa){
+      cuerpo=`<h3 class="ros-t">Por las intenciones del Papa</h3><p>Se reza un Padre nuestro, un Ave María y un Gloria por lo que el Papa le pide hoy a toda la Iglesia. ${MK.g}</p>`;
+    } else {
+      cuerpo=`<h3 class="ros-t">${o.titulo}</h3>${compacto&&o.texto.length>1?`<p class="or-txt">${lineasOracion(o.texto.slice(0,1))}<span class="ros-sigue">…</span></p>`:`<p class="or-txt">${lineasOracion(o.texto)}</p>`}${p.o==='jaculatoria'?`<p class="or-nota">${o.nota} ${MK.g}</p>`:''}`;
+    }
+    card.innerHTML=`
+      <div class="ros-top"><span class="eyebrow">${p.etq}</span><span class="ros-n">${i+1} / ${P.length}</span></div>
+      <div class="bq-prog" aria-hidden="true"><i style="width:${(i+1)/P.length*100}%"></i></div>
+      ${p.misterio!=null?`<p class="ros-set">${ORDINAL[p.misterio]} misterio ${set.slice(0,-1)} · ${M.sentido}</p>`:''}
+      ${cuerpo}
+      <div class="ros-nav">
+        <button type="button" class="bq-link" id="rosAnt"${i===0?' disabled':''}>← Anterior</button>
+        <button type="button" class="bq-btn" id="rosSig">${i===P.length-1?'Terminar':'Siguiente →'}</button>
+      </div>
+      <div class="ros-pie">
+        <label class="ros-chk"><input type="checkbox" id="rosComp"${compacto?' checked':''}> Ya me sé las oraciones (esconder el texto)</label>
+        ${pq?`<details class="ros-pq"><summary>¿Por qué se reza así?</summary><p><b>${pq[0]}.</b> ${pq[1]}</p></details>`:''}
+      </div>`;
+    $('#rosSig').addEventListener('click',()=>{ if(i<P.length-1){i++;pintar();} else {fin=true;guardado.sumar('rosariosRezados',isoLocal(new Date()));pintar();} });
+    $('#rosAnt').addEventListener('click',()=>{ if(i>0){i--;pintar();} });
+    $('#rosComp').addEventListener('change',e=>{compacto=e.target.checked;pintar();});
+  };
+  el.querySelectorAll('.ros-tab').forEach(b=>b.addEventListener('click',()=>{set=b.dataset.set;P=pasosRosario(set);i=0;fin=false;pintar();
+    if(el.getBoundingClientRect().top<0) el.scrollIntoView({behavior:reduce?'auto':'smooth'});}));
+  el.addEventListener('keydown',e=>{
+    if(e.target.closest('input,summary,button.ros-tab')) return;
+    if(e.key==='ArrowRight'&&!fin){e.preventDefault();$('#rosSig').click();}
+    if(e.key==='ArrowLeft'&&!fin){e.preventDefault();$('#rosAnt').click();}
+  });
+  pintar();
+}
+
+/* =========================================================
    BRÚJULA: preguntas de a una y, al final, rasgos, familias, fichas y santos afines.
    ========================================================= */
 const peso = r => r.map((d,i)=>[d, i===0 ? 2 : 1]);
@@ -438,7 +718,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')tip.hidden=true});
 function route(){
   tip.hidden=true;
   const h=(location.hash||'').slice(1);
-  if(FICHAS[h]){renderFicha(h);window.scrollTo(0,0);return;}
+  if(FICHAS[h]){guardado.sumar('fichasVistas',h);renderFicha(h);window.scrollTo(0,0);return;}
+  if(h==='rezar'||h.startsWith('rezar-')){renderRezar();const el=h!=='rezar'&&document.getElementById('s-'+h.slice(6));el?el.scrollIntoView():window.scrollTo(0,0);return;}
   if(h==='brujula'){renderBrujula();window.scrollTo(0,0);return;}
   if(h==='discernir'){renderGuia();window.scrollTo(0,0);return;}
   if(!app.querySelector('#familias')) renderHome();
