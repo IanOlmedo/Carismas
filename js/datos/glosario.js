@@ -68,6 +68,7 @@ const GLOSARIO = {
   "discernimiento": ["Discernimiento", "Aprender a distinguir qué viene de Dios y qué no, observando lo que pasa en el corazón (consolación y desolación), para elegir lo mejor."],
   "inquietud-vocacional": ["Inquietud vocacional", "La pregunta, el deseo o la intuición sobre qué quiere Dios para la propia vida: casarse, consagrarse, ser sacerdote… No es todavía una decisión: es el punto de partida para discernir."],
   "acompanamiento-espiritual": ["Acompañamiento espiritual", "Encuentros periódicos con una persona con experiencia en la vida de fe (un sacerdote, una religiosa o un laico formado) que ayuda a rezar, a leer lo que uno vive y a discernir. También se lo llama dirección espiritual."],
+  "retiro": ["Retiro espiritual", "Unos días (o unas horas) fuera de la rutina para rezar con más calma, muchas veces en silencio y con alguien que guía. Puede ser personal o en grupo."],
   "magis": ["Magis", "Palabra latina que significa “más”. En la espiritualidad ignaciana, el deseo de elegir siempre lo que más ayuda al servicio de Dios y de los demás."],
   "examen": ["Examen ignaciano", "Oración breve, de unos quince minutos, para revisar el día con gratitud, reconocer dónde estuvo Dios, pedir perdón y prepararse para el día siguiente."],
   "oratorio": ["Oratorio salesiano", "La obra que inventó Don Bosco: un lugar para jóvenes que es a la vez casa que acoge, parroquia que evangeliza, escuela que prepara para la vida y patio para encontrarse como amigos."],

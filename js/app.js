@@ -86,7 +86,7 @@ function renderHome(){
   document.title = 'Enciclopedia de Carismas';
   app.innerHTML = `
   <section class="def" aria-label="Qué es este sitio">
-    <p>${terms(`<dfn>Carismas</dfn> <span class="def-cat">(enciclopedia).</span> Guía para jóvenes con [[inquietud-vocacional|inquietudes vocacionales]]. Reúne las distintas formas de vida que la Iglesia propone para seguir a Jesús: <a href="#sacerdote-diocesano">sacerdocio</a>, vida consagrada, órdenes y congregaciones, institutos seculares, movimientos laicales y <a href="#matrimonio">matrimonio</a>. Su objetivo es ayudarte a conocerlas, a descubrir hacia cuál te sentís llamado y a encontrar las herramientas que la Iglesia ofrece para [[discernimiento|discernir]]: el [[acompanamiento-espiritual|acompañamiento espiritual]], la oración, los retiros y el contacto con cada comunidad.`)}</p>
+    <p>${terms(`<dfn>Carismas</dfn> <span class="def-cat">(enciclopedia).</span> Guía para jóvenes con [[inquietud-vocacional|inquietudes vocacionales]]. Reúne las distintas formas de vida que la Iglesia propone para seguir a Jesús: <a href="#sacerdote-diocesano">sacerdocio</a>, vida consagrada, órdenes y congregaciones, institutos seculares, movimientos laicales y <a href="#matrimonio">matrimonio</a>. Su objetivo es ayudarte a conocerlas, a descubrir hacia cuál te sentís llamado y a encontrar las <a href="#discernir">herramientas que la Iglesia ofrece</a> para [[discernimiento|discernir]]: el [[acompanamiento-espiritual|acompañamiento espiritual]], la oración, los retiros y el contacto con cada comunidad.`)}</p>
   </section>
   <section class="hero">
     <div>
@@ -103,6 +103,18 @@ function renderHome(){
     <div><h3>Palabras difíciles, explicadas</h3><p>Los términos con subrayado punteado se pueden tocar para ver qué significan. También están todos juntos en el <a href="#glosario">glosario</a>.</p></div>
     <div><h3>Qué tan seguro es cada dato</h3><p>Los datos llevan una marca para que sepas de dónde vienen.</p>
       <div class="legend">${MK.v}${MK.g}${MK.t}${MK.p}</div></div>
+  </section>
+
+  <section class="bq-cta" aria-label="Brújula">
+    <div>
+      <p class="eyebrow">Brújula</p>
+      <h2>¿Con qué te identificás?</h2>
+      <p>Diez preguntas para ver qué rasgos te atraen más, qué formas de vida podrías explorar y a qué santos te parecés. No es un test vocacional: es un punto de partida para rezar y conversar.</p>
+    </div>
+    <div class="bq-cta-acc">
+      <a class="bq-btn" href="#brujula">Hacer la brújula</a>
+      <a class="bq-link" href="#discernir">¿Por dónde empiezo? Guía de discernimiento →</a>
+    </div>
   </section>
 
   <section id="indice" class="idx">
@@ -232,19 +244,185 @@ function renderFicha(id){
   </div>
   ${footer()}`.replace(/\$\{MK\.(\w)\}/g,(m,k)=>MK[k]||'');
 
-  app.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.dataset.to).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}));
+  tocViva();
   app.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{
     const [q,w]=c.frases[+b.dataset.q]; const txt=`“${q}” — ${w}`;
     const done=()=>{b.textContent='Copiada';setTimeout(()=>b.textContent='Copiar',1600)};
     try{navigator.clipboard.writeText(txt).then(done,()=>sel(b))}catch(e){sel(b)}
   }));
-  // marca la sección visible en el índice
+}
+/* índice lateral de una ficha o de la guía: salta a cada sección y marca la que está a la vista */
+function tocViva(){
+  app.querySelectorAll('.toc a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.dataset.to).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}));
   try{
     const links=[...app.querySelectorAll('.toc a')];
     const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.dataset.to===en.target.id))}}),{rootMargin:'-30% 0px -60% 0px'});
     app.querySelectorAll('.sec').forEach(s=>io.observe(s));
   }catch(e){}
 }
+
+/* =========================================================
+   GUÍA DE DISCERNIMIENTO (#discernir)
+   ========================================================= */
+function renderGuia(){
+  const g = GUIA;
+  document.title = 'Guía de discernimiento · Enciclopedia de Carismas';
+  app.innerHTML = `
+  <section class="ficha-hero" data-fam="guia">
+    ${band('guia')}
+    <div class="fh-in">
+      <div class="fh-title">
+        <p class="crumb"><a href="#inicio">← Inicio</a></p>
+        <p class="eyebrow" style="margin-top:10px">Guía de discernimiento</p>
+        <h1>${g.titulo}</h1>
+      </div>
+      <p class="resumen">${terms(g.resumen)}</p>
+      <div class="fh-side">
+        <div class="motto"><q>${g.lema[0]}</q><span>${g.lema[1]}</span></div>
+        <a class="bq-btn gd-cta" href="#brujula">Hacer la Brújula</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ficha-body" data-fam="guia">
+    <nav class="toc" aria-label="Contenido de la guía">
+      <span class="eyebrow">En esta guía</span>
+      <ol>${g.secciones.map(s=>`<li><a href="#discernir" data-to="s-${s.id}">${s.titulo}</a></li>`).join('')}<li><a href="#discernir" data-to="s-fuentes">Fuentes</a></li></ol>
+    </nav>
+    <article>
+      ${g.secciones.map(s=>`
+        <section class="sec" id="s-${s.id}">
+          <header><h2>${s.titulo}</h2>${MK[s.estado]}</header>
+          ${terms(s.html)}
+        </section>`).join('')}
+      <section class="sec" id="s-fuentes">
+        <header><h2>Fuentes consultadas</h2></header>
+        <p>Las citas marcadas como verificadas se contrastaron con estos documentos el 18 de noviembre de 2026. Los consejos prácticos son sugerencias generales, no normas de la Iglesia.</p>
+        <ul class="sources">${g.fuentes.map(([t,u])=>`<li><a href="${u}" target="_blank" rel="noopener">${t}</a></li>`).join('')}</ul>
+        <p class="note">¿Algo para corregir o sumar a esta guía? <a href="${mailto('Corrección: Guía de discernimiento', 'Sección: \n\nQué agregarías o corregirías: \n\nFuente (si la tenés): \n\nTu nombre (opcional): \n')}">Avisanos por mail</a>. Se revisa antes de publicarse.</p>
+      </section>
+    </article>
+  </div>
+  ${footer()}`.replace(/\$\{MK\.(\w)\}/g,(m,k)=>MK[k]||'');
+  tocViva();
+}
+/* =========================================================
+   BRÚJULA: preguntas de a una y, al final, rasgos, familias, fichas y santos afines.
+   ========================================================= */
+const peso = r => r.map((d,i)=>[d, i===0 ? 2 : 1]);
+const afin = (rasgos, pts) => { const w = peso(rasgos); return w.reduce((s,[d,k])=>s+k*(pts[d]||0),0) / w.reduce((s,[,k])=>s+k,0); };
+const minus = s => s.charAt(0).toLowerCase()+s.slice(1);
+const lista = a => a.length<2 ? a.join('') : a.slice(0,-1).join(', ')+' y '+a[a.length-1];
+
+function renderBrujula(){
+  document.title = '¿Con qué te identificás? · Enciclopedia de Carismas';
+  const resp = [];   // índice de la opción elegida en cada pregunta
+  let i = -1;        // -1 = presentación
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const pintar = html => { app.innerHTML = `<section class="bq">${html}</section>${footer()}`; };
+
+  function intro(){
+    pintar(`
+      <p class="eyebrow">Brújula</p>
+      <h1>¿Con qué te identificás?</h1>
+      <p class="bq-lead">Diez preguntas cortas sobre lo que te atrae, lo que te mueve y cómo te imaginás tu vida. Al final vas a ver qué rasgos aparecen más en tus respuestas, qué formas de vida en la Iglesia podrías explorar y a qué santos te parecés.</p>
+      <div class="note bq-aviso"><b>Esto no es un test vocacional.</b> Ninguna página puede decirte cuál es tu vocación: eso se descubre de a poco, rezando, conversando con alguien que te acompañe y conociendo comunidades de cerca. Tomalo como un juego para empezar a pensar, o para charlar en grupo.</div>
+      <button type="button" class="bq-btn" id="bqGo">Empezar</button>`);
+    $('#bqGo').addEventListener('click',()=>{i=0;pregunta()});
+  }
+
+  function pregunta(){
+    const p = PREGUNTAS[i], n = PREGUNTAS.length;
+    pintar(`
+      <p class="eyebrow">Brújula · pregunta ${i+1} de ${n}</p>
+      <div class="bq-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${i}" aria-label="Avance"><i style="width:${i/n*100}%"></i></div>
+      <h2 class="bq-q" tabindex="-1">${p.q}</h2>
+      <div class="bq-ops">${p.o.map(([t],k)=>`<button type="button" class="bq-op${resp[i]===k?' on':''}" data-k="${k}">${t}</button>`).join('')}</div>
+      <div class="bq-nav">${i>0?`<button type="button" class="bq-link" id="bqBack">← Anterior</button>`:`<button type="button" class="bq-link" id="bqBack">← Volver a la presentación</button>`}</div>`);
+    app.querySelectorAll('.bq-op').forEach(b=>b.addEventListener('click',()=>{
+      resp[i]=+b.dataset.k; i++;
+      i<n ? pregunta() : resultado();
+    }));
+    $('#bqBack').addEventListener('click',()=>{ i--; i<0 ? intro() : pregunta(); });
+    window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+    $('.bq-q').focus({preventScroll:true});
+  }
+
+  function resultado(){
+    const pts = {};
+    resp.forEach((k,q)=>Object.entries(PREGUNTAS[q].o[k][1]).forEach(([d,v])=>pts[d]=(pts[d]||0)+v));
+    const max = Math.max(1,...Object.values(pts));
+    const top = Object.keys(RASGOS).sort((a,b)=>(pts[b]||0)-(pts[a]||0)).slice(0,3).filter(d=>pts[d]);
+
+    const fichas = Object.entries(AFINIDAD).filter(([id])=>FICHAS[id])
+      .map(([id,r])=>({id, s:afin(r,pts)})).sort((a,b)=>b.s-a.s);
+    const familias = FAMILIAS.map(f=>{
+      const mias = fichas.filter(x=>FICHAS[x.id].familia===f.id).slice(0,2);
+      return {f, s: mias.length ? mias.reduce((t,x)=>t+x.s,0)/mias.length : 0};
+    }).sort((a,b)=>b.s-a.s).slice(0,3);
+
+    // santos: el más afín, después el más afín de otro tipo (varón / mujer / pareja), después el siguiente
+    const cand = SANTOS_BRUJULA.filter(x=>!x.ficha || FICHAS[x.ficha])
+      .map(x=>({...x, sc: afin(x.r,pts) + Math.random()*.01})).sort((a,b)=>b.sc-a.sc);
+    const santos = [cand[0]];
+    santos.push(cand.find(x=>x.s!==cand[0].s) || cand[1]);
+    santos.push(cand.find(x=>!santos.includes(x)));
+    const marca = x => x.ficha ? MK[FICHAS[x.ficha].secciones.find(s=>s.id==='santos').estado] : MK.g;
+    const enComun = x => x.r.filter(d=>top.includes(d));
+
+    pintar(`
+      <p class="eyebrow">Brújula · tu resultado</p>
+      <h1>Esto es lo que más aparece en tus respuestas</h1>
+      <p class="bq-lead">Es una lectura simple de lo que elegiste, no un diagnóstico. Si algo no te representa, está perfecto: también eso dice algo.</p>
+
+      <h2 class="bq-h">Lo que más te atrae</h2>
+      <div class="bq-rasgos">${Object.keys(RASGOS).sort((a,b)=>(pts[b]||0)-(pts[a]||0)).filter(d=>pts[d]).slice(0,5).map((d,k)=>`
+        <div class="bq-rasgo${k<3?' dest':''}">
+          <div class="bq-rh"><b>${RASGOS[d][0]}</b><span>${Math.round((pts[d]||0)/max*100)}%</span></div>
+          <div class="bq-bar" aria-hidden="true"><i style="width:${(pts[d]||0)/max*100}%"></i></div>
+          ${k<3?`<p>${RASGOS[d][1]}</p>`:''}
+        </div>`).join('')}</div>
+
+      <h2 class="bq-h">Santos que se parecen a vos</h2>
+      <div class="saints">${santos.map(x=>{const c=enComun(x);return `
+        <div class="saint"${x.ficha?` data-fam="${FICHAS[x.ficha].familia}"`:''}>
+          <b>${x.n}</b><span class="d">${x.d}</span>
+          <p>${x.t} ${marca(x)}</p>
+          ${c.length?`<div class="bq-why"><b>Por qué se parece a vos</b><p>${x.s==='p'?'Tienen':'Tiene'} en común con vos ${lista(c.map(d=>minus(RASGOS[d][0])))}.</p></div>`:''}
+          ${x.ficha?`<a class="bq-mini" href="#${x.ficha}">Ver la ficha: ${FICHAS[x.ficha].nombre} →</a>`:''}
+        </div>`}).join('')}</div>
+      <p class="note">Los santos que tienen ficha enlazan a ella y llevan la marca de esa ficha. Los demás son datos de conocimiento general, todavía no verificados en esta enciclopedia. Si volvés a hacer la brújula, pueden aparecer otros santos con rasgos parecidos.</p>
+
+      <h2 class="bq-h">Familias para explorar</h2>
+      <div class="bq-fams">${familias.map(({f})=>`
+        <a class="bq-fam" data-fam="${f.id}" href="#fam-${f.id}">${band(f.id)}<span class="era">${f.era}</span><strong>${f.nombre}</strong><span class="go">Ver la familia →</span></a>`).join('')}</div>
+
+      <h2 class="bq-h">Fichas para mirar con calma</h2>
+      <div class="fichas bq-fichas">${fichas.slice(0,6).map(({id})=>{const x=FICHAS[id];return `<a class="fcard" data-fam="${x.familia}" href="#${id}"><strong>${x.nombre}</strong><span>${x.tarjeta}</span><br><span class="go">Abrir ficha →</span></a>`}).join('')}</div>
+      <p class="note">Algunas de estas formas de vida son solo para varones o solo para mujeres, y otras piden condiciones particulares: lo vas a ver en cada ficha, en “Cómo formar parte”. Las afinidades entre rasgos y fichas son una simplificación nuestra para orientarte.</p>
+
+      <div class="bq-next">
+        <h2 class="bq-h" style="margin-top:0">¿Y ahora?</h2>
+        <ol class="steps">
+          <li><span>Llevá esto a la oración: preguntale a Dios qué te pasa con lo que salió, qué te alegra y qué te inquieta.</span></li>
+          <li><span>Charlalo con alguien de confianza que te pueda acompañar: un sacerdote, una religiosa, un laico formado. Es lo que la Iglesia llama ${terms('[[acompanamiento-espiritual|acompañamiento espiritual]]')}.</span></li>
+          <li><span>Conocé de cerca: leé las fichas, visitá alguna comunidad, preguntá. En Mendoza podés consultar a la Vicaría para la Vida Consagrada o al Arzobispado.</span></li>
+        </ol>
+        <p style="margin-top:14px"><a class="bq-btn" href="#discernir">Ver la guía de discernimiento</a></p>
+      </div>
+
+      <div class="bq-acc">
+        <button type="button" class="bq-btn" id="bqAgain">Volver a empezar</button>
+        <a class="bq-link" href="#indice">Ver todas las fichas</a>
+      </div>`);
+    $('#bqAgain').addEventListener('click',()=>{resp.length=0;i=0;pregunta()});
+    window.scrollTo(0,0);
+  }
+
+  intro();
+}
+
 function sel(b){const bq=b.closest('.quote').querySelector('blockquote');const r=document.createRange();r.selectNodeContents(bq);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Seleccionada';}
 
 /* ventana del glosario */
@@ -261,6 +439,8 @@ function route(){
   tip.hidden=true;
   const h=(location.hash||'').slice(1);
   if(FICHAS[h]){renderFicha(h);window.scrollTo(0,0);return;}
+  if(h==='brujula'){renderBrujula();window.scrollTo(0,0);return;}
+  if(h==='discernir'){renderGuia();window.scrollTo(0,0);return;}
   if(!app.querySelector('#familias')) renderHome();
   if(h && h!=='inicio'){
     const k=h==='tipL'?null:h;

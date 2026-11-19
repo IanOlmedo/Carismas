@@ -27,12 +27,17 @@ js/datos/glosario.js       GLOSARIO: clave -> [término, definición]
 js/datos/familias.js       FAMILIAS: las 8 familias, sus fichas (en orden) y "proximas"
 js/datos/fichas/_base.js   const FICHAS = {}
 js/datos/fichas/<familia>.js  Object.assign(FICHAS, {...}) con las fichas de esa familia
+js/datos/brujula.js        Brújula (#brujula): RASGOS, PREGUNTAS, AFINIDAD de cada ficha y SANTOS_BRUJULA
+js/datos/guia.js           GUIA: guía de discernimiento (#discernir), con secciones y fuentes como una ficha
 js/app.js                  Render, rosetón, ruteo por hash, glosario emergente
 herramientas/verificar.js  Chequeo automático con Playwright
 ```
 
 No hay módulos ES a propósito: el sitio tiene que abrir con doble clic (file://). El orden de los `<script>` importa:
-`marcas` → `glosario` → `familias` → `fichas/_base` → fichas por familia → `app`.
+`marcas` → `glosario` → `familias` → `fichas/_base` → fichas por familia → `brujula` → `guia` → `app`.
+
+**Brújula:** cada ficha nueva tiene que sumarse a `AFINIDAD` en `js/datos/brujula.js` (si no, `npm run verificar` avisa).
+Los santos sin ficha van con datos prudentes y se muestran como "conocimiento general".
 
 ## Marcas de verificación (`MK`)
 
@@ -99,9 +104,10 @@ En la línea de tiempo, el año tiene que ser corto ("1524", "s. XII", "≈1950"
 
 1. Investigar con fuentes y anotar qué está verificado y qué no.
 2. Agregar la ficha en `js/datos/fichas/<familia>.js`.
-3. Agregar su id al array `fichas` de la familia en `js/datos/familias.js` y sacarla de `proximas` si estaba.
-4. Si usa términos nuevos, agregarlos a `js/datos/glosario.js`.
-5. Correr `npm run verificar` y revisar visualmente en el navegador (claro, oscuro y celular).
+3. Sumarla a `AFINIDAD` en `js/datos/brujula.js` (y sus santos a `SANTOS_BRUJULA` si corresponde).
+4. Agregar su id al array `fichas` de la familia en `js/datos/familias.js` y sacarla de `proximas` si estaba.
+5. Si usa términos nuevos, agregarlos a `js/datos/glosario.js`.
+6. Correr `npm run verificar` y revisar visualmente en el navegador (claro, oscuro y celular).
 
 ## Diseño
 
